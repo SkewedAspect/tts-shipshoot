@@ -1,0 +1,16 @@
+--------------------------------------------------------------------------------
+-- Test Module - This is just for testing using the `#include` syntax.
+--------------------------------------------------------------------------------
+
+--[[
+	To use this module, simply add `#include !/test` in your lua script.
+	Assuming you setup your path right, you should be able call `testModule.foo`
+	and see output in the chat window.
+]]
+local testModule = {}
+
+function testModule.foo()
+	print("Module inclusion works!")
+end
+
+--------------------------------------------------------------------------------

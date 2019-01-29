@@ -38,6 +38,11 @@ copy the save file for the Table you want from `/saves` into
 `~/Library/Tabletop Simulator/Saves`. Make sure to copy the `.json` and `.png`
 file!
 
+## Setting up a Development Environment
+
+Setting up a development environment for TTS is tricky. So, have a wiki page:
+* [Development Setup](https://github.com/SkewedAspect/tts-shipshoot/wiki/Development-Setup)
+
 ### Linking to an asset
 
 Because we have all of this in GitHub, it means we're able to link directly to
