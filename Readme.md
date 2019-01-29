@@ -2,9 +2,10 @@
 
 This is a project whose end goal is to answer the age old question:
 
-> "Who would win in a fight: The Enterprise D or a Star Destroyer?"
-> "What about Captain Kirk flying the Millenium Falcon, versus Han Solo in a Constitution Class?"
-> "Ok, but what if six TIE Fighters jumped an Assimilated Andromeda Ascendant attacking LEXX??"
+> "Who would win in a fight: The Enterprise D or a Star Destroyer? What about
+> Captain Kirk flying the Millenium Falcon, versus Han Solo in a Constitution
+> Class? Ok, but what if six TIE Fighters jumped an Assimilated Andromeda
+> Ascendant attacking LEXX??"
 
 These are questions the world needs answers to. And TSSS is here to give you
 those!
