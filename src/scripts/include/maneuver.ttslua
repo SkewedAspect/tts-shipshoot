@@ -1,0 +1,111 @@
+Maneuver = {
+  -- most of the maneuvers are turns or banks, and thus can be described by arcs
+  -- on a circle. However, straight maneuvers do not, thus we allow nil.
+  arc_degrees = nil,
+  -- If arc_degrees is not nil, this is the radius of the circle the arc is
+  -- drawn upon in 'small ship bases'. If arc_degrees is nil, then this is the
+  -- distance the ship would travel in a straight line, also in 'small ship bases'.
+  distance = 1,
+  -- start rotation is the radians the ship should rotate before moving along
+  -- the arc. Most maneuvers this will be 0, but the old style spin would have
+  -- a start ±90°.
+  -- this is in radians.
+  start_rotation = 0,
+  -- this is the rotation that should be applied to a ship after the maneuver is
+  -- done. For example, the new style spin would have a final roation of ±90°,
+  -- as would the tallon roll. An about out have a final roation of +180°.
+  -- also in radians.
+  final_rotation = 0
+}
+
+--[[
+some sizes taken from various places.
+
+Small base size: 40 mm
+Large base size: 80 mm
+
+Turn inside radii in mm: 25.0, 53.0, 80.0
+Turn outside radii in mm: 45.0, 73.0, 100.0
+
+Bank inside radii in mm: 70.0, 120.0, 170.0
+Bank outside radii in mm: 90.0, 140.0, 190.0
+]]
+
+function Maneuver.new(arc, dist, start_rot, fin_rot)
+  return {arc_degrees = arc, distance = 1, start_rotation = start_rot, final_rotation = fin_rot}
+end
+
+-- The most common maneuvers, mostly hard-coded for our convience. There are some
+
+-- straight can be used for reverse if given a negative distance.
+function Maneuver.straight(distance)
+  return Maneuver.new(nil, distance, 0, 0)
+end
+
+function Maneuver.reverse(distance)
+  return Maneuver.new(nil, distance * -1, 0, 0)
+end
+
+function Maneuver.spin(distance, direction)
+  local rotation = math.pi / 2
+  if direction == "left" then
+    rotation  = rotation * -1
+  end
+  return Maneuver.new(nil, distance, 0, rotation)
+end
+
+function Maneuver.turn(distance, direction)
+  local arc_deg = math.pi / 2
+  if direction = "right" then
+    arc_deg = arc_deg * -1
+  end
+  local radius = 1 -- not actually used
+  if distance == 1 then
+    radius = 0.85
+  elseif distance == 2 then
+    radius = 1.575
+  elseif distance  == 3 then
+    radius = 2.25
+  end
+  return Maneuver.new(arc_deg, distance, 0, 0)
+end
+
+function Maneuver.bank(distance, direction)
+  local arc_deg = math.pi / 4
+  if direction == "right" then
+    arc_deg = arc_deg * -1
+  end
+  local radius = 1
+  if distance == 1 then
+    radius = 2
+  elseif distance == 2 then
+    radius = 3.25
+  elseif distance == 3 then
+    radius = 4.5
+  end
+  return Maneuver.new(arc_deg, distance, 0, 0)
+end
+
+function Maneuver.about(distance)
+  return Maneuver.new(nil, distance, 0, math.pi)
+end
+
+function Maneuver.stop()
+  return Maneuver.new(nil, 0, 0, 0)
+end
+
+function Maneuver.segnor(distance, direction)
+  local bank = Maneuver.bank(distance, direction)
+  bank.final_rotation = math.pi
+  return bank
+end
+
+function Maneuver.tallon(distance, direction)
+  local turn = Maneuver.turn(distance, direction)
+  local final = math.pi / 2
+  if direction == "right" then
+    final = final * -1
+  end
+  turn.final_rotation = final
+  return turn
+end
