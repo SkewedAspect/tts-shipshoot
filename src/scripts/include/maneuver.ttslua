@@ -1,10 +1,30 @@
 Maneuver = {
-  -- most of the maneuvers are turns or banks, and thus can be described by arcs
-  -- on a circle. However, straight maneuvers do not, thus we allow nil.
-  arc_degrees = nil,
-  -- If arc_degrees is not nil, this is the radius of the circle the arc is
-  -- drawn upon in 'small ship bases'. If arc_degrees is nil, then this is the
-  -- distance the ship would travel in a straight line, also in 'small ship bases'.
+  --[[
+  The lovely ascii art below may make the logic of how a maneuver is described
+  easier to follow. The diagram is only applicable when the arc_radians is nil
+  indicating the maneuver is not a 'straight' one.
+      -          |          -
+    /            |            \
+   /             |             \
+  /              |              \
+  | +arc_radians | +arc_radians |
+  +- -distance --+-- +distance -+
+  | -arc_radians | -arc_radians |
+  \              |              /
+   \             |             /
+    \            |            /
+      -          |          -
+  The '+' to the left and right indicate where ship's base starts. The center
+  most '+' is where the circles the arcs are inscribed on is. If the degress is
+  positive, then the arc sweeps upwards, in a positive direction on the vertical
+  axis.
+
+  if the arc_radians is nil, the the distance is the movement along the vector
+  the ship faces after start_rotation is applied. A positive distance moves the
+  ship forward, negative moves back.
+  ]]
+  -- arc_radians is in radians.
+  arc_radians = nil,
   distance = 1,
   -- start rotation is the radians the ship should rotate before moving along
   -- the arc. Most maneuvers this will be 0, but the old style spin would have
@@ -32,10 +52,38 @@ Bank outside radii in mm: 90.0, 140.0, 190.0
 ]]
 
 function Maneuver.new(arc, dist, start_rot, fin_rot)
-  return {arc_degrees = arc, distance = 1, start_rotation = start_rot, final_rotation = fin_rot}
+  return {arc_radians = arc, distance = 1, start_rotation = start_rot, final_rotation = fin_rot}
 end
 
--- The most common maneuvers, mostly hard-coded for our convience. There are some
+--[[
+Return a vector and rotation that, if applied `segments` times to the ship using
+local coordinates, would be the same as rotating the ship the maneuvers
+`arc_radians` and fully moving the ship along the maneuver arc (or line if
+arc_raidans == 0).
+
+Only works if segments > 0. If segments == 1, it completes the move.
+
+This does not do any preliminary movement the ship may need such as:
+- moving the ship forward along it's facing half the distance of its base.
+- applying the maneuver's start_rotation to the ship.
+- applying the maneuver's final_rotatino to the ship.
+]]
+function Maneuver.segment(self, segments)
+  segments = segments or 8
+  if self.arc_radians then
+    local arc_increment = self.arc_radians / segments
+    local ship_rotation = arc_increment / -2
+    local distance = self.distance * math.sin(self.arc_radians / 2)
+    local vector = vector.from_angles(ship_rotation, 0)
+    return {vector, ship_rotation}
+  else
+    return {{self.distance / segments, 0, 0}, 0}
+  end
+end
+
+-- The most common maneuvers, mostly hard-coded for our convience. There are
+-- some that require some post-maneuver shenanigans, but that's outside the
+-- scope of this module.
 
 -- straight can be used for reverse if given a negative distance.
 function Maneuver.straight(distance)
