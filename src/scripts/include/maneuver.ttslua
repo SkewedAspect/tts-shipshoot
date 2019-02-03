@@ -68,6 +68,7 @@ This does not do any preliminary movement the ship may need such as:
 - applying the maneuver's start_rotation to the ship.
 - applying the maneuver's final_rotation to the ship.
 ]]
+-- self is the maneuver table to create a segment for.
 function Maneuver.segment(self, segments)
   segments = segments or 8
   if self.arc_radians then
