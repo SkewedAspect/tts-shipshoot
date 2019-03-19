@@ -1,7 +1,7 @@
 #include !/vector
 
 Maneuver = {}
-  --[[
+--[[
   The lovely ascii art below may make the logic of how a maneuver is described
   easier to follow. The diagram is only applicable when the arc_radians is not
   nil indicating the maneuver is not a 'straight' one.
